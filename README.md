@@ -1,6 +1,3 @@
 TBURLImageView
 ==============
-- a
-- b
-- c
-- d
+- Referring to examples of usage
