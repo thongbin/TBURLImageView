@@ -8,12 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSUInteger, TBURLImageViewType){
+    TBURLImageViewTypeDefault,
+    TBURLImageViewTypeClick,
+    TBURLImageViewTypeClickWithAnimation,
+};
+
 @interface TBURLImageView : UIImageView
 
+@property (nonatomic,assign)TBURLImageViewType URLImageViewType;
 @property (nonatomic,copy) NSString *imageUrl;
-@property (nonatomic,assign) BOOL clickEnable;
-@property (nonatomic,assign) BOOL clickAnimationEnable;
-@property (nonatomic,strong) void(^clickedImage)(TBURLImageView *tbURLImageView);
+@property (nonatomic,strong) void(^didClicked)(TBURLImageView *URLImageView);
+
+- (instancetype)initWithFrame:(CGRect)frame ByType:(TBURLImageViewType)URLImageViewType;
 
 -(void)setPlaceHolderImage:(UIImage *)placeHolderImage;
 -(void)setFailedImage:(UIImage *)failedImage;

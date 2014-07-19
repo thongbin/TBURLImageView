@@ -41,15 +41,14 @@
      *  If you create imageview this way and you want use the click function, you must turn off the xib autolayout
      */
 
+    [_firstURLImageView setURLImageViewType:TBURLImageViewTypeClickWithAnimation];
     [_firstURLImageView setTag:999];
     [_firstURLImageView setPlaceHolderImage:[UIImage imageNamed:@"default"]];
     [_firstURLImageView setFailedImage:[UIImage imageNamed:@"failedImage"]];
     [_firstURLImageView setImageUrl:@"http://www.clker.com/cliparts/c/2/4/3/1194986855125869974rubik_s_cube_random_petr_01.svg.hi.png"];
     [_firstURLImageView setLayerCornerRadius:5.0];
-    [_firstURLImageView setClickEnable:YES];
-    [_firstURLImageView setClickAnimationEnable:YES];
-    [_firstURLImageView setClickedImage:^(TBURLImageView *tbURLImage){
-        NSLog(@"%i",tbURLImage.tag);
+    [_firstURLImageView setDidClicked:^(TBURLImageView *tbURLImage){
+        NSLog(@"%li",(long)tbURLImage.tag);
     }];
     
     [_secondURLImageView setImageUrl:@"http://highslide.com/samples/full2.jpg"];

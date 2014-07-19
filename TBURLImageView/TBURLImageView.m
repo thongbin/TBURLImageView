@@ -30,7 +30,27 @@ static NSCache *_cache = nil;
     
 }
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.frame = CGRectZero;
+        [self initSomething];
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame ByType:(TBURLImageViewType)tBURLImageViewType
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        _URLImageViewType = tBURLImageViewType;
+        [self initSomething];
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -51,6 +71,7 @@ static NSCache *_cache = nil;
 -(void)initSomething
 {
     // do something ,you know.
+    [self setURLImageViewType:_URLImageViewType];
     
     _indicatorView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     _indicatorView.frame = self.bounds;
@@ -75,19 +96,26 @@ static NSCache *_cache = nil;
     });
 }
 
--(void)setClickEnable:(BOOL)clickEnable
+-(void)setURLImageViewType:(TBURLImageViewType)URLImageViewType
 {
     // if u want to click the image , set it to yes and do not forget set the clicked block.
-    if (clickEnable) {
-        [self setUserInteractionEnabled:clickEnable];
-        _tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTapEvent)];
-        [self addGestureRecognizer:_tapRecognizer];
+    _URLImageViewType = URLImageViewType;
+    switch (_URLImageViewType) {
+        case TBURLImageViewTypeDefault:
+            [self setUserInteractionEnabled:NO];
+            if (_tapRecognizer) {
+                [self removeGestureRecognizer:_tapRecognizer];
+            }
+            break;
+        case TBURLImageViewTypeClick:
+        case TBURLImageViewTypeClickWithAnimation:
+            [self setUserInteractionEnabled:YES];
+            _tapRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTapEvent)];
+            [self addGestureRecognizer:_tapRecognizer];
+            break;
+        default:
+            break;
     }
-}
-
--(void)setClickAnimationEnable:(BOOL)clickAnimationEnable
-{
-    _clickAnimationEnable = clickAnimationEnable;
 }
 
 -(void)setImageUrl:(NSString *)imageUrl
@@ -245,7 +273,7 @@ static NSCache *_cache = nil;
 #pragma mark - UITapGestureRecognizer handle
 -(void)handleTapEvent
 {
-    if (_clickAnimationEnable) {
+    if (_URLImageViewType == TBURLImageViewTypeClickWithAnimation) {
         [UIView animateWithDuration:kDuration
                          animations:^(){
                              self.transform = CGAffineTransformMakeScale(kScale_x, kScale_y);
@@ -256,15 +284,15 @@ static NSCache *_cache = nil;
                                                   self.transform = CGAffineTransformIdentity;
                                               }
                                               completion:^(BOOL finished){
-                                                  if (_clickedImage) {
-                                                      _clickedImage(self);
+                                                  if (_didClicked) {
+                                                      _didClicked(self);
                                                   }
                                               }];
                          }];
     } else {
         
-        if (_clickedImage) {
-            _clickedImage(self);
+        if (_didClicked) {
+            _didClicked(self);
         }
     }
 }
